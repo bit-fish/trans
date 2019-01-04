@@ -1,0 +1,86 @@
+<html>
+    <head lang="en">
+        <meta name="viewport" content="width=device-width">
+        <style>
+            body,textarea,button{
+                font-size: 20px;
+            }
+            #text{
+                width: 80%;
+                margin-left: auto;
+                margin-right: auto;
+                height: 90%;
+                display: block;
+                padding: 0px;
+            }
+            #trans{
+                width: 80%;
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+                padding: 3px;
+            }
+            @media (max-width: 650px){
+                #text{
+                    width: 100%;
+                }
+            }
+            .know{
+                border: 1px green solid;
+            }
+        </style>
+    </head>
+    <body>
+      <div>
+          <textarea id=text>
+          </textarea>
+          <button id=trans>translate</button>
+          <ul id=ul>
+              <!--<li>word</li>
+              <li class="know">word</li>-->
+          </ul>
+      </div>
+      <script>
+          function getVocList(text){
+            return text.match(/[a-zA-Z]+/g)
+          }
+
+          function getUnknowVoc(vocArray){
+              return vocArray.filter(value => {
+                  return !localStorage[value]
+              })
+          }
+
+          function callCambridge(vocList){
+              vocList.forEach(ele => {
+                  window.open(`https://dictionary.cambridge.org/dictionary/english/${ele}`)
+              });
+          }
+
+          document.getElementById('trans').onclick = () => {
+              var text = document.getElementById('text').value
+              var vocList = getVocList(text)
+              console.log(vocList)
+              var unknowVocList = getUnknowVoc(vocList)
+              unknowVocList = unknowVocList.splice(0,7)
+              callCambridge(unknowVocList)
+              var ulHTML = ''
+              unknowVocList.forEach(value => {
+                  ulHTML += `<li>${value}</li>`
+              })
+              document.getElementById('ul').innerHTML = ulHTML
+          }
+
+          document.getElementById('ul').onclick = (event) => {
+              var value = event.target.innerText
+              if(localStorage[value]) {
+                  localStorage[value] = ''
+                  event.target.classList=[]
+              } else {
+                  localStorage[value] = 1
+                  event.target.classList=['know']
+              }
+          }
+      </script>
+    </body>
+</html>
